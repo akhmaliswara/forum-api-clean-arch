@@ -14,13 +14,43 @@ class CommentRepositoryPostgres extends CommentRepository {
     const id = `comment-${this._idGenerator()}`;
 
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5) RETURNING id, owner, thread_id, content, is_deleted',
-      values: [id, owner, threadId, content, false],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5, $6) RETURNING id, owner, thread_id, content, is_deleted',
+      values: [id, owner, threadId, content, false, new Date()],
     };
 
     const response = await this._pool.query(query);
 
     return new AddedComment({ ...response.rows[0] });
+  }
+
+  async getById(commentId) {
+    const query = {
+      text: 'SELECT * FROM comments WHERE id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('comment tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
+
+  async deleteComment(commentId) {
+    const query = {
+      text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
+      values: [commentId],
+    }
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new InvariantError('comment tidak ditemukan');
+    }
+
+    return result.rows[0];
   }
 }
 

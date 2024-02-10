@@ -24,6 +24,10 @@ exports.up = (pgm) => {
     is_deleted: {
       type: 'BOOLEAN',
       notNull: true
+    },
+    date: {
+      type: 'TIMESTAMP',
+      notNull: true,
     }
   });
 };
