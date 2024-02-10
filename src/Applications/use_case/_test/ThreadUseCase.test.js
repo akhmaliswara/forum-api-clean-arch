@@ -12,10 +12,12 @@ describe('ThreadUseCase', () => {
     // Arrange
     const userId = 'user-123';
     const username = 'dicoding';
+    const title = 'Title';
+    const body = 'Body';
 
     const useCasePayload = {
-      title: 'Title',
-      body: 'Body'
+      title,
+      body
     };
 
     const mockAddedThread = new AddedThread({
@@ -46,13 +48,13 @@ describe('ThreadUseCase', () => {
     // Assert
     expect(addedThread).toStrictEqual(new AddedThread({
       id: 'thread-123',
-      title: useCasePayload.title,
+      title,
       owner: userId
     }));
 
     expect(mockThreadRepository.addThread).toBeCalledWith(new NewThread({
-      title: useCasePayload.title,
-      body: useCasePayload.body,
+      title,
+      body,
       owner: userId
     }));
   });

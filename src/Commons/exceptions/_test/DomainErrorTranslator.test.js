@@ -15,6 +15,10 @@ describe('DomainErrorTranslator', () => {
       .toStrictEqual(new InvariantError('payload tidak sesuai'));
     expect(DomainErrorTranslator.translate(new Error('NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION')))
       .toStrictEqual(new InvariantError('payload tidak sesuai'));
+      expect(DomainErrorTranslator.translate(new Error('NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY')))
+      .toStrictEqual(new InvariantError('payload tidak sesuai'));
+    expect(DomainErrorTranslator.translate(new Error('NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION')))
+      .toStrictEqual(new InvariantError('payload tidak sesuai'));
   });
 
   it('should return original error when error message is not needed to translate', () => {

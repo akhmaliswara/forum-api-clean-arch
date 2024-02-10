@@ -21,7 +21,7 @@ describe('ThreadRepositoryPostgres', () => {
   });
 
   describe('addThread function', () => {
-    it('should persist register thread and return registered thread correctly', async () => {
+    it('should persist thread and return added thread correctly', async () => {
       // Arrange
       const newThread = new NewThread({
         title: 'dicoding',
@@ -40,6 +40,35 @@ describe('ThreadRepositoryPostgres', () => {
         title: 'dicoding',
         owner: 'user-123',
       }));
+    });
+  });
+
+  describe('getById function', () => {
+    it('should throw InvariantError when threadId not found', () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      return expect(threadRepositoryPostgres.getById(''))
+        .rejects
+        .toThrowError(InvariantError);
+    });
+
+    it('should return object when thread is found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123'; // stub!
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        owner: 'user-123',
+        title: 'Dicoding',
+        body: 'Dicoding Indonesia'
+      });
+
+      // Action & Assert
+      const thread = await threadRepositoryPostgres.getById('thread-123');
+      expect(thread).toBeInstanceOf(Object);
     });
   });
 });
