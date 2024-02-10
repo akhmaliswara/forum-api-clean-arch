@@ -76,6 +76,25 @@ describe('CommentRepositoryPostgres', () => {
     });
   });
 
+  describe('getByThreadId function', () => {
+    it('should return object when comment is found', async () => {
+      // Arrange
+      const fakeIdGenerator = () => '123'; // stub!
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        owner: 'user-123',
+        threadId: 'thread-123',
+        body: 'Dicoding Indonesia'
+      });
+
+      // Action & Assert
+      const comment = await commentRepositoryPostgres.getByThreadId('thread-123');
+      expect(Array.isArray(comment)).toBe(true);
+    });
+  });
+
   describe('deleteComment function', () => {
     it('should throw NotFound when commentId not found', () => {
       // Arrange

@@ -38,6 +38,21 @@ class CommentRepositoryPostgres extends CommentRepository {
     return result.rows[0];
   }
 
+  async getByThreadId(threadId) {
+    const query = {
+      text: `
+        SELECT comments.id, owner, thread_id, content, is_deleted, date, username
+        FROM comments JOIN users ON comments.owner = users.id
+        WHERE thread_id = $1
+      `,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
   async deleteComment(commentId) {
     const query = {
       text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
