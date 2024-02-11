@@ -1,5 +1,3 @@
-const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NewReply = require('../../Domains/replies/entities/NewReply');
 
 class ReplyUseCase {
@@ -13,31 +11,23 @@ class ReplyUseCase {
   async addReply(useCasePayload, username) {
     const id = await this._userRepository.getIdByUsername(username);
 
-    try {
-      await this._threadRepository.getById(useCasePayload.threadId);
-      await this._commentRepository.getById(useCasePayload.commentId);
-    } catch (error) {
-      throw new NotFoundError(error.message);
-    }
+    await this._threadRepository.verifyAvailableThreadId(useCasePayload.threadId);
+    await this._commentRepository.verifyAvailableCommentId(useCasePayload.commentId);
 
     const newReply = new NewReply({ ...useCasePayload, owner: id })
     return await this._replyRepository.addReply(newReply);
   }
 
   async deleteReply(useCasePayload, username) {
+    await this._threadRepository.verifyAvailableThreadId(useCasePayload.threadId);
+    await this._commentRepository.verifyAvailableCommentId(useCasePayload.commentId);
+    await this._replyRepository.verifyAvailableReplyId(useCasePayload.replyId);
+    
     const id = await this._userRepository.getIdByUsername(username);
-    let reply;
-
-    try {
-      await this._threadRepository.getById(useCasePayload.threadId);
-      await this._commentRepository.getById(useCasePayload.commentId);
-      reply = await this._replyRepository.getById(useCasePayload.replyId);
-    } catch (error) {
-      throw new NotFoundError(error.message);
-    }
+    const reply = await this._replyRepository.getById(useCasePayload.replyId);
 
     if (reply.owner !== id) {
-      throw new AuthorizationError("Unauthorized");
+      throw new Error('DELETE_REPLY.UNAUTHORIZED');
     }
 
     return await this._replyRepository.deleteReply(useCasePayload.replyId);

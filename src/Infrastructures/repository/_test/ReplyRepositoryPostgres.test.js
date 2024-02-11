@@ -47,6 +47,12 @@ describe('ReplyRepositoryPostgres', () => {
         content: 'Dicoding Indonesia',
         owner: 'user-123',
       }));
+
+      const replies = await RepliesTableTestHelper.findRepliesById('reply-123');
+      expect(replies).toHaveLength(1);
+      expect(replies[0].id).toBe('reply-123');
+      expect(replies[0].content).toBe('Dicoding Indonesia');
+      expect(replies[0].owner).toBe('user-123');
     });
   });
 
@@ -70,12 +76,15 @@ describe('ReplyRepositoryPostgres', () => {
         id: 'reply-123',
         owner: 'user-123',
         commentId: 'comment-123',
-        body: 'Dicoding Indonesia'
+        content: 'Dicoding Indonesia'
       });
 
       // Action & Assert
       const reply = await replyRepositoryPostgres.getById('reply-123');
       expect(reply).toBeInstanceOf(Object);
+      expect(reply.id).toBe('reply-123');
+      expect(reply.content).toBe('Dicoding Indonesia');
+      expect(reply.owner).toBe('user-123');
     });
   });
 
@@ -93,8 +102,31 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       // Action & Assert
-      const reply = await replyRepositoryPostgres.getByThreadId('comment-123');
+      const reply = await replyRepositoryPostgres.getByThreadId('thread-123');
       expect(Array.isArray(reply)).toBe(true);
+      expect(reply).toHaveLength(1);
+      expect(reply[0].id).toBe('reply-123');
+      expect(reply[0].content).toBe('Dicoding Indonesia');
+      expect(reply[0].owner).toBe('user-123');
+    });
+  });
+
+  describe('verifyAvailableReplyId function', () => {
+    it('should throw NotFoundError when reply not available', async () => {
+      // Arrange
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(replyRepositoryPostgres.verifyAvailableReplyId('reply-1234')).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw NotFoundError when reply available', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({ id: 'reply-1234' });
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(replyRepositoryPostgres.verifyAvailableReplyId('reply-1234')).resolves.not.toThrowError(NotFoundError);
     });
   });
 
@@ -122,8 +154,11 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       // Action & Assert
-      expect(replyRepositoryPostgres.deleteReply('reply-123'))
-        .resolves;
+      const deletedReply = await replyRepositoryPostgres.deleteReply('reply-123')
+      expect(deletedReply.is_deleted).toBeTruthy();
+
+      const reply = await replyRepositoryPostgres.getById('reply-123');
+      expect(reply.is_deleted).toBeTruthy();
     });
   });
 });

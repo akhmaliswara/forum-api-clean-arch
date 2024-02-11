@@ -1,6 +1,7 @@
 const InvariantError = require('../../Commons/exceptions/InvariantError');
 const AddedComment = require('../../Domains/comments/entities/AddedComment');
 const CommentRepository = require('../../Domains/comments/CommentRepository');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 
 class CommentRepositoryPostgres extends CommentRepository {
   constructor(pool, idGenerator) {
@@ -44,6 +45,7 @@ class CommentRepositoryPostgres extends CommentRepository {
         SELECT comments.id, owner, thread_id, content, is_deleted, date, username
         FROM comments JOIN users ON comments.owner = users.id
         WHERE thread_id = $1
+        ORDER BY comments.date
       `,
       values: [threadId],
     };
@@ -53,9 +55,22 @@ class CommentRepositoryPostgres extends CommentRepository {
     return result.rows;
   }
 
+  async verifyAvailableCommentId(commentId) {
+    const query = {
+      text: 'SELECT id FROM comments WHERE id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('comment tidak tersedia');
+    }
+  }
+
   async deleteComment(commentId) {
     const query = {
-      text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
+      text: 'UPDATE comments SET is_deleted = true WHERE id = $1 RETURNING id, owner, thread_id, content, is_deleted',
       values: [commentId],
     }
 

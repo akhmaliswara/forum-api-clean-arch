@@ -1,4 +1,5 @@
 const InvariantError = require('../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const AddedReply = require('../../Domains/replies/entities/AddedReply');
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 
@@ -54,9 +55,22 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return result.rows;
   }
 
+  async verifyAvailableReplyId(replyId) {
+    const query = {
+      text: 'SELECT id FROM replies WHERE id = $1',
+      values: [replyId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('reply tidak tersedia');
+    }
+  }
+
   async deleteReply(replyId) {
     const query = {
-      text: 'UPDATE replies SET is_deleted = true WHERE id = $1',
+      text: 'UPDATE replies SET is_deleted = true WHERE id = $1 RETURNING id, owner, comment_id, content, is_deleted',
       values: [replyId],
     }
 

@@ -55,6 +55,12 @@ describe('ThreadUseCase', () => {
       title,
       owner: userId
     }));
+
+    expect(mockThreadRepository.addThread).toBeCalledWith(new NewThread({
+      title,
+      body,
+      owner: userId
+    }));
   });
 
   it('should orchestrating the get thread by id correctly', async () => {

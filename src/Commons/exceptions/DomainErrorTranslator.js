@@ -1,3 +1,4 @@
+const AuthorizationError = require('./AuthorizationError');
 const InvariantError = require('./InvariantError');
 
 const DomainErrorTranslator = {
@@ -21,8 +22,10 @@ DomainErrorTranslator._directories = {
   'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
   'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
   'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
+  'DELETE_COMMENT.UNAUTHORIZED': new AuthorizationError('unauthorize to delete'),
   'NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
-  'NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai')
+  'NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
+  'DELETE_REPLY.UNAUTHORIZED': new AuthorizationError('unauthorize to delete')
 };
 
 module.exports = DomainErrorTranslator;
