@@ -6,6 +6,7 @@ const UserRepository = require('../../../Domains/users/UserRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
 
 describe('ThreadUseCase', () => {
   /**
@@ -87,7 +88,25 @@ describe('ThreadUseCase', () => {
       }
     ];
 
+    const mockReply = [
+      {
+        id: 'reply-123',
+        comment_id: 'comment-123',
+        content: title,
+        is_deleted: false,
+        owner: userId
+      },
+      {
+        id: 'reply-1234',
+        comment_id: 'comment-1234',
+        content: title,
+        is_deleted: true,
+        owner: userId
+      }
+    ];
+
     /** creating dependency of use case */
+    const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
     const mockThreadRepository = new ThreadRepository();
 
@@ -96,9 +115,12 @@ describe('ThreadUseCase', () => {
       .mockImplementation(() => Promise.resolve(mockThread));
     mockCommentRepository.getByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve(mockComment));
+    mockReplyRepository.getByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockReply));
 
     /** creating use case instance */
     const threadUseCase = new ThreadUseCase({
+      replyRepository: mockReplyRepository,
       commentRepository: mockCommentRepository,
       threadRepository: mockThreadRepository,
     });
@@ -109,6 +131,9 @@ describe('ThreadUseCase', () => {
     // Assert
     expect(threads).toBeInstanceOf(Object);
     expect(Array.isArray(threads.comments)).toBe(true);
+    threads.comments.forEach(comment => {
+      expect(Array.isArray(comment.replies)).toBe(true);
+    });
   });
 
   it('should throw not found error if thread not found', async () => {

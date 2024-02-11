@@ -2,7 +2,8 @@ const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const NewThread = require('../../Domains/threads/entities/NewThread');
 
 class ThreadUseCase {
-  constructor({ commentRepository, threadRepository, userRepository }) {
+  constructor({ replyRepository, commentRepository, threadRepository, userRepository }) {
+    this._replyRepository = replyRepository;
     this._commentRepository = commentRepository;
     this._threadRepository = threadRepository;
     this._userRepository = userRepository;
@@ -22,12 +23,19 @@ class ThreadUseCase {
     } catch (error) {
       throw new NotFoundError('thread not found');
     }
-
+    
+    const replies = await this._replyRepository.getByThreadId(threadId);
     const comments = (await this._commentRepository.getByThreadId(threadId)).map((q) => ({
       id: q.id,
       username: q.username,
       date: q.date,
-      content: q.is_deleted ? "**komentar telah dihapus**" : q.content
+      content: q.is_deleted ? "**komentar telah dihapus**" : q.content,
+      replies: replies.filter(p => p.comment_id === q.id).map(r => ({
+        id: r.id,
+        username: r.username,
+        date: r.date,
+        content: r.is_deleted ? "**balasan telah dihapus**" : r.content
+      }))
     }));
 
     thread.comments = comments;

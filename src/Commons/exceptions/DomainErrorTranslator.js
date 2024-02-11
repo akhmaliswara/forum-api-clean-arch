@@ -20,7 +20,9 @@ DomainErrorTranslator._directories = {
   'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
   'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
   'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
-  'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai')
+  'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
+  'NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
+  'NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai')
 };
 
 module.exports = DomainErrorTranslator;
