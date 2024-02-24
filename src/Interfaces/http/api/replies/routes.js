@@ -4,17 +4,17 @@ const routes = (handler) => ([
     path: '/threads/{threadId}/comments/{commentId}/replies',
     handler: (request, h) => handler.postReplyHandler(request, h),
     options: {
-      auth: 'forumapi_jwt',
-    },
+      auth: 'forumapi_jwt'
+    }
   },
   {
     method: 'DELETE',
     path: '/threads/{threadId}/comments/{commentId}/replies/{replyId}',
     handler: (request, h) => handler.deleteReplyHandler(request, h),
     options: {
-      auth: 'forumapi_jwt',
-    },
-  },
-]);
+      auth: 'forumapi_jwt'
+    }
+  }
+])
 
-module.exports = routes;
+module.exports = routes

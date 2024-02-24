@@ -1,13 +1,13 @@
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const ThreadUseCase = require('../ThreadUseCase');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
-const AddedThread = require('../../../Domains/threads/entities/AddedThread');
-const UserRepository = require('../../../Domains/users/UserRepository');
-const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const InvariantError = require('../../../Commons/exceptions/InvariantError');
-const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
-const LikeRepository = require('../../../Domains/likes/LikeRepository');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
+const ThreadUseCase = require('../ThreadUseCase')
+const NewThread = require('../../../Domains/threads/entities/NewThread')
+const AddedThread = require('../../../Domains/threads/entities/AddedThread')
+const UserRepository = require('../../../Domains/users/UserRepository')
+const CommentRepository = require('../../../Domains/comments/CommentRepository')
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
+const InvariantError = require('../../../Commons/exceptions/InvariantError')
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
+const LikeRepository = require('../../../Domains/likes/LikeRepository')
 
 describe('ThreadUseCase', () => {
   /**
@@ -15,68 +15,68 @@ describe('ThreadUseCase', () => {
    */
   it('should orchestrating the add thread action correctly', async () => {
     // Arrange
-    const userId = 'user-123';
-    const username = 'dicoding';
-    const title = 'Title';
-    const body = 'Body';
+    const userId = 'user-123'
+    const username = 'dicoding'
+    const title = 'Title'
+    const body = 'Body'
 
     const useCasePayload = {
       title,
       body
-    };
+    }
 
     const mockAddedThread = new AddedThread({
       id: 'thread-123',
       title: useCasePayload.title,
       owner: userId
-    });
+    })
 
     /** creating dependency of use case */
-    const mockThreadRepository = new ThreadRepository();
-    const mockUserRepository = new UserRepository();
+    const mockThreadRepository = new ThreadRepository()
+    const mockUserRepository = new UserRepository()
 
     /** mocking needed function */
     mockThreadRepository.addThread = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockAddedThread));
+      .mockImplementation(() => Promise.resolve(mockAddedThread))
     mockUserRepository.getIdByUsername = jest.fn()
-      .mockImplementation(() => Promise.resolve(userId));
+      .mockImplementation(() => Promise.resolve(userId))
 
     /** creating use case instance */
     const threadUseCase = new ThreadUseCase({
       threadRepository: mockThreadRepository,
       userRepository: mockUserRepository
-    });
+    })
 
     // Action
-    const addedThread = await threadUseCase.addThread(useCasePayload, username);
+    const addedThread = await threadUseCase.addThread(useCasePayload, username)
 
     // Assert
     expect(addedThread).toStrictEqual(new AddedThread({
       id: 'thread-123',
       title,
       owner: userId
-    }));
+    }))
 
     expect(mockThreadRepository.addThread).toBeCalledWith(new NewThread({
       title,
       body,
       owner: userId
-    }));
-  });
+    }))
+  })
 
   it('should orchestrating the get thread by id correctly', async () => {
     // Arrange
-    const userId = 'user-123';
-    const threadId = 'thread-123';
-    const title = 'Title';
-    const body = 'Body';
+    const userId = 'user-123'
+    const threadId = 'thread-123'
+    const title = 'Title'
+    const body = 'Body'
 
     const mockThread = {
       id: 'thread-123',
       title,
       body,
       owner: userId
-    };
+    }
 
     const mockComment = [
       {
@@ -93,7 +93,7 @@ describe('ThreadUseCase', () => {
         is_deleted: true,
         owner: userId
       }
-    ];
+    ]
 
     const mockReply = [
       {
@@ -110,7 +110,7 @@ describe('ThreadUseCase', () => {
         is_deleted: true,
         owner: userId
       }
-    ];
+    ]
 
     const mockLike = [
       {
@@ -120,47 +120,47 @@ describe('ThreadUseCase', () => {
     ]
 
     /** creating dependency of use case */
-    const mockLikeRepository = new LikeRepository();
-    const mockReplyRepository = new ReplyRepository();
-    const mockCommentRepository = new CommentRepository();
-    const mockThreadRepository = new ThreadRepository();
+    const mockLikeRepository = new LikeRepository()
+    const mockReplyRepository = new ReplyRepository()
+    const mockCommentRepository = new CommentRepository()
+    const mockThreadRepository = new ThreadRepository()
 
     /** mocking needed function */
     mockThreadRepository.getById = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockThread));
+      .mockImplementation(() => Promise.resolve(mockThread))
     mockCommentRepository.getByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockComment));
+      .mockImplementation(() => Promise.resolve(mockComment))
     mockReplyRepository.getByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockReply));
+      .mockImplementation(() => Promise.resolve(mockReply))
     mockLikeRepository.getCountLikeByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockLike));
+      .mockImplementation(() => Promise.resolve(mockLike))
 
     /** creating use case instance */
     const threadUseCase = new ThreadUseCase({
       likeRepository: mockLikeRepository,
       replyRepository: mockReplyRepository,
       commentRepository: mockCommentRepository,
-      threadRepository: mockThreadRepository,
-    });
+      threadRepository: mockThreadRepository
+    })
 
     // Action
-    const threads = await threadUseCase.getById(threadId);
+    const threads = await threadUseCase.getById(threadId)
 
     // Assert
-    expect(threads).toBeInstanceOf(Object);
-    expect(Array.isArray(threads.comments)).toBe(true);
+    expect(threads).toBeInstanceOf(Object)
+    expect(Array.isArray(threads.comments)).toBe(true)
     threads.comments.forEach(comment => {
-      expect(Array.isArray(comment.replies)).toBe(true);
-      expect(typeof comment.likeCount).toBe('number');
-      expect(comment.likeCount).toBeGreaterThanOrEqual(0);
-    });
-  });
+      expect(Array.isArray(comment.replies)).toBe(true)
+      expect(typeof comment.likeCount).toBe('number')
+      expect(comment.likeCount).toBeGreaterThanOrEqual(0)
+    })
+  })
 
   it('should throw not found error if thread not found', async () => {
     // Arrange
-    const userId = 'user-123';
-    const threadId = 'thread-123';
-    const title = 'Title';
+    const userId = 'user-123'
+    const threadId = 'thread-123'
+    const title = 'Title'
 
     const mockComment = [
       {
@@ -177,26 +177,26 @@ describe('ThreadUseCase', () => {
         is_deleted: true,
         owner: userId
       }
-    ];
+    ]
 
     /** creating dependency of use case */
-    const mockCommentRepository = new CommentRepository();
-    const mockThreadRepository = new ThreadRepository();
+    const mockCommentRepository = new CommentRepository()
+    const mockThreadRepository = new ThreadRepository()
 
     /** mocking needed function */
     mockThreadRepository.getById = jest.fn()
-      .mockImplementation(() => Promise.reject(new InvariantError()));
+      .mockImplementation(() => Promise.reject(new InvariantError()))
     mockCommentRepository.getByThreadId = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockComment));
+      .mockImplementation(() => Promise.resolve(mockComment))
 
     /** creating use case instance */
     const threadUseCase = new ThreadUseCase({
       commentRepository: mockCommentRepository,
-      threadRepository: mockThreadRepository,
-    });
+      threadRepository: mockThreadRepository
+    })
 
     // Action & Assert
-    expect(threadUseCase.getById(threadId))
-      .rejects.toThrowError(NotFoundError);
-  });
-});
+    return expect(threadUseCase.getById(threadId))
+      .rejects.toThrowError(NotFoundError)
+  })
+})

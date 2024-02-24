@@ -1,15 +1,15 @@
-const NewReply = require('../NewReply');
+const NewReply = require('../NewReply')
 
 describe('NewReply entities', () => {
   it('should throw error when payload not contain needed property', () => {
     // Arrange
     const payload = {
       commentId: 'comment-123'
-    };
+    }
 
     // Action & Assert
-    expect(() => new NewReply(payload)).toThrowError('NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY');
-  });
+    expect(() => new NewReply(payload)).toThrowError('NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY')
+  })
 
   it('should throw error when payload not meet data type specification', () => {
     // Arrange
@@ -17,11 +17,11 @@ describe('NewReply entities', () => {
       content: 123,
       owner: 'user-123',
       commentId: 'comment-123'
-    };
+    }
 
     // Action & Assert
-    expect(() => new NewReply(payload)).toThrowError('NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION');
-  });
+    expect(() => new NewReply(payload)).toThrowError('NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION')
+  })
 
   it('should create NewReply entities correctly', () => {
     // Arrange
@@ -29,15 +29,15 @@ describe('NewReply entities', () => {
       content: 'content',
       owner: 'user-123',
       commentId: 'comment-123'
-    };
+    }
 
     // Action
-    const newReply = new NewReply(payload);
+    const newReply = new NewReply(payload)
 
     // Assert
-    expect(newReply).toBeInstanceOf(NewReply);
-    expect(newReply.content).toEqual(payload.content);
-    expect(newReply.commentId).toEqual(payload.commentId);
-    expect(newReply.owner).toEqual(payload.owner);
-  });
-});
+    expect(newReply).toBeInstanceOf(NewReply)
+    expect(newReply.content).toEqual(payload.content)
+    expect(newReply.commentId).toEqual(payload.commentId)
+    expect(newReply.owner).toEqual(payload.owner)
+  })
+})
