@@ -7,6 +7,7 @@ const CommentRepository = require('../../../Domains/comments/CommentRepository')
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
+const LikeRepository = require('../../../Domains/likes/LikeRepository');
 
 describe('ThreadUseCase', () => {
   /**
@@ -111,7 +112,15 @@ describe('ThreadUseCase', () => {
       }
     ];
 
+    const mockLike = [
+      {
+        comment_id: 'comment-123',
+        like_count: 2
+      }
+    ]
+
     /** creating dependency of use case */
+    const mockLikeRepository = new LikeRepository();
     const mockReplyRepository = new ReplyRepository();
     const mockCommentRepository = new CommentRepository();
     const mockThreadRepository = new ThreadRepository();
@@ -123,9 +132,12 @@ describe('ThreadUseCase', () => {
       .mockImplementation(() => Promise.resolve(mockComment));
     mockReplyRepository.getByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve(mockReply));
+    mockLikeRepository.getCountLikeByThreadId = jest.fn()
+      .mockImplementation(() => Promise.resolve(mockLike));
 
     /** creating use case instance */
     const threadUseCase = new ThreadUseCase({
+      likeRepository: mockLikeRepository,
       replyRepository: mockReplyRepository,
       commentRepository: mockCommentRepository,
       threadRepository: mockThreadRepository,
@@ -139,6 +151,8 @@ describe('ThreadUseCase', () => {
     expect(Array.isArray(threads.comments)).toBe(true);
     threads.comments.forEach(comment => {
       expect(Array.isArray(comment.replies)).toBe(true);
+      expect(typeof comment.likeCount).toBe('number');
+      expect(comment.likeCount).toBeGreaterThanOrEqual(0);
     });
   });
 
