@@ -20,6 +20,12 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+    - name: Start SSH tunnel
+      run: ssh -fNT -L ${{ secrets.PGPORT_TEST }}:${{ secrets.PGENDPOINT_TEST }}:${{ secrets.PGPORT_TEST }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
     - name: npm install migrate and test
       run: |
         npm install
@@ -39,3 +45,5 @@ jobs:
         PGPORT: ${{ secrets.PGPORT_TEST }}
         ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
         REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
+    - name: Stop SSH tunnel
+      run: kill $(ps aux | grep '[s]sh -fNT' | awk '{print $2}')
