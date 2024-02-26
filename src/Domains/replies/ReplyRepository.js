@@ -1,23 +1,23 @@
 class ReplyRepository {
-  async addReply(newReply) {
-    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  async addReply (newReply) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async getById(replyId) {
-    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  async getById (replyId) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async getByThreadId(threadId) {
-    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  async getByThreadId (threadId) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async verifyAvailableReplyId(commentId) {
-    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  async verifyAvailableReplyId (commentId) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 
-  async deleteReply(replyId) {
-    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  async deleteReply (replyId) {
+    throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED')
   }
 }
 
-module.exports = ReplyRepository;
+module.exports = ReplyRepository

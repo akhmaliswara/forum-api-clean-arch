@@ -1,11 +1,11 @@
-const AuthorizationError = require('./AuthorizationError');
-const InvariantError = require('./InvariantError');
+const AuthorizationError = require('./AuthorizationError')
+const InvariantError = require('./InvariantError')
 
 const DomainErrorTranslator = {
-  translate(error) {
-    return DomainErrorTranslator._directories[error.message] || error;
-  },
-};
+  translate (error) {
+    return DomainErrorTranslator._directories[error.message] || error
+  }
+}
 
 DomainErrorTranslator._directories = {
   'REGISTER_USER.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat user baru karena properti yang dibutuhkan tidak ada'),
@@ -26,6 +26,6 @@ DomainErrorTranslator._directories = {
   'NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('payload tidak sesuai'),
   'NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('payload tidak sesuai'),
   'DELETE_REPLY.UNAUTHORIZED': new AuthorizationError('unauthorize to delete')
-};
+}
 
-module.exports = DomainErrorTranslator;
+module.exports = DomainErrorTranslator
