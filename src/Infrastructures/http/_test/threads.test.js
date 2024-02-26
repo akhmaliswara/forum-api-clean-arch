@@ -112,6 +112,7 @@ describe('/threads endpoint', () => {
       expect(response.statusCode).toEqual(200)
       expect(responseJson.status).toEqual('success')
       expect(responseJson.data.thread).toBeDefined()
+      expect(1).toEqual(3)
     })
   })
 })
